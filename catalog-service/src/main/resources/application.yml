@@ -1,0 +1,11 @@
+server:
+  port: 9001
+  tomcat:
+    #How much time Tomcat should wait between accepting a TCP connection from a client and actually receiving the HTTP request
+    #It helps prevent denial-of-service (DoS) attacks where a connection is established, Tomcat reserves a thread to handle the request, and the request never comes
+    #The same timeout is used to limit the time spent reading the HTTP request body when there is one
+    connection-timeout: 2s
+    keep-alive-timeout: 15s
+    threads:
+      max: 50
+      min-spare: 5

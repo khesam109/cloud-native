@@ -1,0 +1,49 @@
+#The name of the workflow
+name: Commit Stage
+#The workflow is triggered when new code is pushed to the repository.
+on: push
+
+jobs:
+  #The job’s unique identifier
+  build:
+    #A human-friendly name for the job
+    name: Build and Test
+    runs-on: ubuntu-22.04
+    #The permissions granted to the job
+    permissions:
+      #Permission to check out the current Git repository
+      contents: read
+      #Permission to submit security events to GitHub
+      security-events: write
+    #Each job is composed of steps, which are executed sequentially
+    #A step could be either a shell command or an action
+    #Actions are custom applications used to perform complex tasks in a more structured and reproducible way
+    #The GitHub organization provides a basic set of actions
+    #There’s also a marketplace with many more actions developed by the community
+    steps:
+      - name: Checkout source code
+        #Checks out the current Git repository
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        #Install and configures a Java runtime
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - name: Build, unit tests and integration tests
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+      - name: Code vulnerability scanning
+        uses: anchore/scan-action@v3
+        id: scan
+        with:
+          path: "${{ github.workspace }}"
+          fail-build: false
+          severity-cutoff: high
+      - name: Upload vulnerability report
+        uses: github/codeql-action/upload-sarif@v2
+        if: success() || failure()
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}

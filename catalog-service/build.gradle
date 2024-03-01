@@ -1,0 +1,40 @@
+plugins {
+	//Provides Java support in Gradle, setting up tasks to compile, build, and test the application
+	id 'java'
+
+	//Provides Spring Boot support in Gradle and declares which version to use
+	id 'org.springframework.boot' version '3.2.2'
+
+	//Provides dependency management features for Spring
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.khesam'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	//Since the project depends on this, Spring Boot will initialize an embedded Tomcat server instance
+	//and apply the minimal configuration required to get a web application up and running
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//Provides  several  libraries  and  utilities  for  testing  applications,
+	//including  Spring Test,  JUnit,  AssertJ,  and Mockito
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+}
+
+tasks.named('test') {
+
+	//Enables testing with the JUnit Platform provided by JUnit 5
+	useJUnitPlatform()
+}
